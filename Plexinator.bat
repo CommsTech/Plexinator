@@ -45,6 +45,11 @@ SET /P FILEBOT=Enter the full filebot.exe location ex: X:\mine\filebot.exe here:
 IF "%FILEBOT%"=="" SET FILEBOT=C:\Users\terra\AppData\Local\Microsoft\WindowsApps\PointPlanck.FileBot_49ex9gnthnt12\filebot
 SET /P LIBARYCHECK=Enter the full Libarycheck.ps1 location ex:X:\mine\LibaryCheck.ps1 here:
 IF "%LIBARYCHECK%"=="" SET LIBARYCHECK=E:\Plexinator\LibaryCheck.ps1
+SET /a THREADA=%NUMBER_OF_PROCESSORS% / 2 + (%NUMBER_OF_PROCESSORS%/2/2)
+SET /P THREADS=Enter the number of threads you want to use ( We recommend %THREADA% )
+IF "%THREADS%"=="" SET THREADS=%THREADA%
+
+
 
 CD /D %WORK_DIR%
 
@@ -83,7 +88,7 @@ goto submenu
 CLS
 Title Plexinator - FFMPEG optimizer (Step 3)
 echo time to optimize exhisting videos
-ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mp4') DO "%FFMPG%" -i "%%G" -movflags faststart -acodec copy -vcodec copy "%OUTPUT_DIR%\%%~nG.mp4" -threads 0
+ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mp4') DO "%FFMPG%" -i "%%G" -movflags faststart -acodec copy -vcodec copy "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads%
 goto submenu
 
 :Filer
