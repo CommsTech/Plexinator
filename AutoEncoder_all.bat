@@ -38,13 +38,13 @@ IF "%WORK_DIR%"=="" SET WORK_DIR=C:\
 SET /P OUTPUT_DIR=Enter your Video file output directory here:
 IF "%OUTPUT_DIR%"=="" SET OUTPUT_DIR=D:\Downloads\Completed
 SET /P HANDBRAKE_CLI=Enter the full handbreakcli.exe location ex: X:\mine\handbreakcli.exe here:
-IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=C:\Users\terra\Desktop\corrupted-media-scanner-master\handbrakecli.exe
+IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=E:\Plexinator\handbrakecli.exe
 SET /P FFMPG=Enter the full ffmpeg.exe location ex: X:\mine\ffmpeg.exe here:
-IF "%FFMPG%"=="" SET FFMPG=C:\Program Files\HandBrake\ffmpeg-4.2.1-win64-static\bin\ffmpeg.exe
+IF "%FFMPG%"=="" SET FFMPG=E:\Plexinator\ffmpeg.exe
 SET /P FILEBOT=Enter the full filebot.exe location ex: X:\mine\filebot.exe here:
 IF "%FILEBOT%"=="" SET FILEBOT=C:\Users\terra\AppData\Local\Microsoft\WindowsApps\PointPlanck.FileBot_49ex9gnthnt12\filebot
 SET /P LIBARYCHECK=Enter the full Libarycheck.ps1 location ex:X:\mine\LibaryCheck.ps1 here:
-IF "%LIBARYCHECK%"=="" SET LIBARYCHECK=C:\Users\terra\Desktop\corrupted-media-scanner-master\LibaryCheck.ps1
+IF "%LIBARYCHECK%"=="" SET LIBARYCHECK=E:\Plexinator\LibaryCheck.ps1
 
 CD /D %WORK_DIR%
 
