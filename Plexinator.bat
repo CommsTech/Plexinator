@@ -46,6 +46,7 @@ IF "%FILEBOT%"=="" SET FILEBOT=C:\Users\terra\AppData\Local\Microsoft\WindowsApp
 SET /P LIBARYCHECK=Enter the full Libarycheck.ps1 location ex:X:\mine\LibaryCheck.ps1 here:
 IF "%LIBARYCHECK%"=="" SET LIBARYCHECK=E:\Plexinator\LibaryCheck.ps1
 SET /a THREADA=%NUMBER_OF_PROCESSORS% / 2 + (%NUMBER_OF_PROCESSORS%/2/2)
+IF /I "%THREADA%" LEQ "1" SET /a THREADA=0
 SET /P THREADS=Enter the number of threads you want to use ( We recommend %THREADA% )
 IF "%THREADS%"=="" SET THREADS=%THREADA%
 
