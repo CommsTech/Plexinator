@@ -112,7 +112,7 @@ echo Lets start with file conversions
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV') DO "%HANDBRAKE_CLI%" -i "%%G" -o "%OUTPUT_DIR%\%%~nG.mp4" --preset="Fast 1080p30" --optimize
 Title Plexinator - FFMPEG optimizer (Step 3)
 echo time to optimize exhisting videos
-ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mp4') DO "%FFMPG%" -i "%%G" -movflags faststart -acodec copy -vcodec copy "%OUTPUT_DIR%\%%~nG.mp4" -threads 0
+ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mp4') DO "%FFMPG%" -i "%%G" -movflags faststart -acodec copy -vcodec copy "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads%
 Title Plexinator - FileBot Orginiation (Step 4)
 echo lets put those files where they belong
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.mp4') DO "%FILEBOT%" -rename "%%G" -script fn:amc --output "%OUTPUT_DIR%" --action move --conflict skip -non-strict --log-file amc.log --def unsorted=n music=y artwork=n clean=y movieFormat="%OUTPUT_DIR%\Movies\{n} ({y})\{n} ({y})" seriesFormat="%OUTPUT_DIR%\TV Shows\{n} - {episode.special ? 'S00E'+special.pad(2) : s00e00} - {t.replaceAll(/[`´‘’ʻ]/, /'/).replaceAll(/[!?.]+$/).replacePart(', Part $1')}{'.'+lang}" "ut_label=%L" "ut_state=%S" "ut_title=%N" "ut_kind=%K" "ut_file=%F" "ut_dir=%D"
