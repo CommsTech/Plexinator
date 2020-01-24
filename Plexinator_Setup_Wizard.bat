@@ -32,7 +32,14 @@ REM ----------------------------------------------------------------------------
 CLS
 Title Plexinator - Setup (Step 1)
 REM set program locations
+Echo Do You Have All the Prereqs? i.e. Handbreakcli,ffmpeg and filebot?
+Echo 1. Yes
+Echo 2. No
+SET /P PREREQ=
+IF %PREREQ%==1 Goto START 
+IF %PREREQ%==2 Powershell.exe -executionpolicy remotesigned -File PreReq_Downloader.ps1
 
+:START
 SET /P OUTPUT_DIR=Enter your Video file output directory here:
 IF "%OUTPUT_DIR%"=="" SET OUTPUT_DIR=D:\Downloads\Completed
 SET /P HANDBRAKE_CLI=Enter the full handbreakcli.exe location ex: X:\mine\handbreakcli.exe here:
@@ -57,26 +64,3 @@ echo "SET FILEBOT = %FILEBOT%"
 echo "SET LIBARYCHECK = %LIBARYCHECK%"
 echo "SET THREADS = %THREADS%"
 ) > Settings.conf
-
-:Installers
-:GET_HandbreakCLI
-if exist Handbreakcli.exe echo File already exists!&pause&goto :GET_FFMPEG
-start "Handbreacli Setup" wget -N https://handbrake.fr/downloads2.php >nul 2>&1
-if exist Handbreakcli.exe (echo File download successful.) else (echo File download UNSUCCESSFUL.) goto :Get_HandbreakCLI
-start Handbreakcli.exe
-
-:GET_FFMPEG
-if exist ffmpeg.exe echo File already exists!&pause&goto :GET_FILEBOT
-start "FFMPEG Setup" wget -N https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-20200121-fc6fde2-win64-static.zip >nul 2>&1
-if exist ffmpeg-20200121-fc6fde2-win64-static.zip (echo File download successful.) else (echo File download UNSUCCESSFUL.)
-start ffmpeg-20200121-fc6fde2-win64-static.zip
-
-:GET_FILEBOT
-if exist filebot.exe echo File already exists!&pause&goto :EOF
-start "FILEBOT Setup" wget -N https://get.filebot.net/filebot/FileBot_4.8.5/FileBot_4.8.5_x64.msi >nul 2>&1
-if exist FileBot_4.8.5_x64.msi (echo File download successful.) else (echo File download UNSUCCESSFUL.)
-start FileBot_4.8.5_x64.msi
-goto installers
-:EOF
-echo All Setup
-pause
