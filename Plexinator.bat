@@ -36,18 +36,22 @@ REM set program locations
 REM ------------------------------------------------------------------------------------------------------------------------
 REM Gather information and set Variables
 REM ------------------------------------------------------------------------------------------------------------------------
-
-CLS
-Title Plexinator - Setup (Step 1)
-REM set program locations
-Echo Do You Have All the Prereqs? i.e. Handbreakcli,ffmpeg and filebot?
+IF EXIST "PREREQS\HandBrakeCLI.exe" (
+  goto BEGIN
+) ELSE (
+ goto PREREQINSTALL
+)
+:PREREQINSTALL
+Echo It Doesnt look like you have the Prereqs? i.e. Handbreakcli,ffmpeg and filebot?
+Echo Would you like us to attempt to download and set them up?
 Echo 1. Yes
 Echo 2. No
 SET /P PREREQ=
-IF %PREREQ%==1 Goto START 
-IF %PREREQ%==2 Powershell.exe -executionpolicy remotesigned -File PreReq_Downloader.ps1
+IF %PREREQ%==1 Powershell.exe -executionpolicy remotesigned -File \PREREQS\PreReq_Downloader.ps1 
+IF %PREREQ%==2 goto EOF
 
-:START
+
+:BEGIN
 SET /P OUTPUT_DIR=Enter your Video file output directory here:
 IF "%OUTPUT_DIR%"=="" SET OUTPUT_DIR=D:\Downloads\Completed
 SET /P HANDBRAKE_CLI=Enter the full handbreakcli.exe location ex: X:\mine\handbreakcli.exe here:
@@ -117,7 +121,7 @@ goto submenu
 CLS
 Title Plexinator - Handbreak Tester (Step 5)
 echo Time to list the files with possible playback issues
-Powershell.exe -File "%LIBARARYCHECK%" -dir "%WORK_DIR%" -threads %THREADS%
+Powershell.exe -executionpolicy remotesigned -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -threads "%THREADS%"
 goto submenu
 
 :Automagic
@@ -133,7 +137,8 @@ echo lets put those files where they belong
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.mp4') DO "%FILEBOT%" -rename "%%G" -script fn:amc --output "%OUTPUT_DIR%" --action move --conflict skip -non-strict --log-file amc.log --def unsorted=n music=y artwork=n clean=y movieFormat="%OUTPUT_DIR%\Movies\{n} ({y})\{n} ({y})" seriesFormat="%OUTPUT_DIR%\TV Shows\{n} - {episode.special ? 'S00E'+special.pad(2) : s00e00} - {t.replaceAll(/[`´‘’ʻ]/, /'/).replaceAll(/[!?.]+$/).replacePart(', Part $1')}{'.'+lang}" "ut_label=%L" "ut_state=%S" "ut_title=%N" "ut_kind=%K" "ut_file=%F" "ut_dir=%D"
 Title Plexinator - Handbreak Tester (Step 5)
 echo Time to list the files with possible playback issues
-Powershell.exe -File "%LIBARARYCHECK%" -dir "%WORK_DIR%" -threads %THREADS%
+Powershell.exe -executionpolicy remotesigned -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -threads "%THREADS%"
 goto Menu
 
+:EOF
 pause
