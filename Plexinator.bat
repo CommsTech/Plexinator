@@ -6,22 +6,22 @@ Title Plexinator
 REM --------------------------------------------------------------------------------------------------------------------------
 REM Disclosure Agreement
 REM --------------------------------------------------------------------------------------------------------------------------
-echo **************************************************
-echo *                                                *
-echo * This is a tool to  assist in the optimization  *
-echo * of you plex video files.                       *
-echo * The creator of this software holds no          *
-echo * liability.                                     *
-echo * Special Thanks to the developers of:           *
-echo * HandbreakCLI, FFMPEG and FileBot               *
-echo *                                                *
-echo *                                                *
-echo *   That being said....                          *
-echo *      Let's continue!                           * 
-echo *                                                *
-echo **************************************************
-echo *             Press ENTER to start               *
-echo ************************************************** 
+echo             **************************************************
+echo             *                                                *
+echo             * This is a tool to  assist in the optimization  *
+echo             * of you plex video files.                       *
+echo             * The creator of this software holds no          *
+echo             * liability.                                     *
+echo             * Special Thanks to the developers of:           *
+echo             * HandbreakCLI, FFMPEG and FileBot               *
+echo             *                                                *
+echo             *                                                *
+echo             *   That being said....                          *
+echo             *      Let's continue!                           * 
+echo             *                                                *
+echo             **************************************************
+echo             *             Press ENTER to start               *
+echo             ************************************************** 
 pause
 
 :START
@@ -36,32 +36,44 @@ REM set program locations
 REM ------------------------------------------------------------------------------------------------------------------------
 REM Gather information and set Variables
 REM ------------------------------------------------------------------------------------------------------------------------
+:HBCHECK
 IF EXIST "PREREQS\HandBrakeCLI.exe" (
+  goto FFMPEGCHECK
+) ELSE (
+ goto PREREQINSTALL
+)
+:FFMPEGCHECK
+IF EXIST "PREREQS\FFMPEG.exe" (
   goto BEGIN
 ) ELSE (
  goto PREREQINSTALL
 )
+
 :PREREQINSTALL
-Echo It Doesnt look like you have the Prereqs? i.e. Handbreakcli,ffmpeg and filebot?
+Echo We cant find Handbreakcli and/ or ffmpeg.
 Echo Would you like us to attempt to download and set them up?
 Echo 1. Yes
-Echo 2. No
+Echo 2. No / Quit
+Echo 3. My Files are located in a diffrent folder
 SET /P PREREQ=
 IF %PREREQ%==1 Powershell.exe -executionpolicy remotesigned -File \PREREQS\PreReq_Downloader.ps1 
 IF %PREREQ%==2 goto EOF
+IF %PREREQ%==3 goto ADDITIONALINFO
 
-
-:BEGIN
-SET /P OUTPUT_DIR=Enter your Video file output directory here:
-IF "%OUTPUT_DIR%"=="" SET OUTPUT_DIR=D:\Downloads\Completed
+:ADDITIONALINFO
 SET /P HANDBRAKE_CLI=Enter the full handbreakcli.exe location ex: X:\mine\handbreakcli.exe here:
 IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=E:\Plexinator\PREREQS\HandBrakeCLI.exe
 SET /P FFMPG=Enter the full ffmpeg.exe location ex: X:\mine\ffmpeg.exe here:
 IF "%FFMPG%"=="" SET FFMPG=E:\Plexinator\PREREQS\ffmpeg.exe
+
+:BEGIN
+SET /P OUTPUT_DIR=Enter your Video file output directory here:
+IF "%OUTPUT_DIR%"=="" SET OUTPUT_DIR=D:\Downloads\Completed
+IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=E:\Plexinator\PREREQS\HandBrakeCLI.exe
+IF "%FFMPG%"=="" SET FFMPG=E:\Plexinator\PREREQS\ffmpeg.exe
 SET /P FILEBOT=Enter the full filebot.exe location ex: X:\mine\filebot.exe here:
 IF "%FILEBOT%"=="" SET FILEBOT=C:\Users\terra\AppData\Local\Microsoft\WindowsApps\PointPlanck.FileBot_49ex9gnthnt12\filebot
-SET /P LIBARYCHECK=Enter the full Libarycheck.ps1 location ex:X:\mine\LibaryCheck.ps1 here:
-IF "%LIBARYCHECK%"=="" SET LIBARYCHECK=E:\Plexinator\PREREQS\LibaryCheck.ps1
+SET LIBARYCHECK=E:\Plexinator\PREREQS\LibaryCheck.ps1
 SET /a THREADA=%NUMBER_OF_PROCESSORS% / 2 + (%NUMBER_OF_PROCESSORS%/2/2)
 IF /I "%THREADA%" LEQ "1" SET /a THREADA=0
 SET /P THREADS=Enter the number of threads you want to use ( We recommend %THREADA% )
@@ -76,9 +88,11 @@ CD /D %WORK_DIR%
 echo
 echo 1. By the numbers
 echo 2. Automagic
+echo 3. Attempt to share the wealth with other computers Automagically (coming soon)
 set /p MENUSELECT=Type Your Choice then press ENTER :
 IF %MENUSELECT%==1 goto Submenu
 IF %MENUSELECT%==2 goto Automagic
+IF %MENUSELECT%==3 goto DISTRIBUTED_MAGIC
 
 :Submenu
 echo
@@ -139,6 +153,9 @@ Title Plexinator - Handbreak Tester (Step 5)
 echo Time to list the files with possible playback issues
 Powershell.exe -executionpolicy remotesigned -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -threads "%THREADS%"
 goto Menu
+
+:DISTRIBUTED_MAGIC
+rem future magic
 
 :EOF
 pause

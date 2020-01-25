@@ -4,6 +4,7 @@ Invoke-WebRequest https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-20200121
 Invoke-WebRequest https://get.filebot.net/filebot/FileBot_4.8.5/FileBot_4.8.5_x64.msi -OutFile ./FileBot_4.8.5_x64.msi
 Expand-Archive -LiteralPath ./HandBrakeCLI.zip -DestinationPath $THEpath -Force
 Expand-Archive -LiteralPath ./ffmpeg.zip -DestinationPath $THEpath -Force
+Expand-Archive -LiteralPath ./PSTools.zip -DestinationPath $THEpath -Force
 Move-Item -Path $THEpath\HandBreakCLI.exe -Destination $THEpath\PREREQS\HandBreakCLI.exe
 Move-Item -Path $THEpath\ffmpeg-20200121-fc6fde2-win64-static\bin\ffmpeg.exe -Destination $THEpath\PREREQS\ffmpeg.exe
 Move-Item -Path $THEpath\FileBot_4.8.5_x64.msi -Destination $THEpath\PREREQS\FileBot_4.8.5_x64.msi
