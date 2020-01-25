@@ -56,7 +56,7 @@ Echo 1. Yes
 Echo 2. No / Quit
 Echo 3. My Files are located in a diffrent folder
 SET /P PREREQ=
-IF %PREREQ%==1 Powershell.exe -executionpolicy bypass -File PREREQS\PreReq_Downloader.ps1
+IF %PREREQ%==1 Powershell.exe -executionpolicy bypass -File PREREQS\PreReq_Downloader.ps1 
 IF %PREREQ%==2 goto EOF
 IF %PREREQ%==3 goto ADDITIONALINFO
 
