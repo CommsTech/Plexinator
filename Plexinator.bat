@@ -37,6 +37,7 @@ REM ----------------------------------------------------------------------------
 REM Gather information and set Variables
 REM ------------------------------------------------------------------------------------------------------------------------
 :HBCHECK
+powershell.exe -executionpolicy -bypass
 IF EXIST "PREREQS\HandBrakeCLI.exe" (
   goto FFMPEGCHECK
 ) ELSE (
@@ -57,7 +58,7 @@ Echo 2. No / Quit
 Echo 3. My Files are located in a diffrent folder
 SET /P PREREQ=
 <<<<<<< HEAD
-IF %PREREQ%==1 Powershell.exe -ExecutionPolicy Bypass -File PREREQS\PreReq_Downloader.ps1 
+IF %PREREQ%==1 Powershell.exe -File PREREQS\PreReq_Downloader.ps1 
 IF %PREREQ%==2 goto EOF
 IF %PREREQ%==3 goto ADDITIONALINFO
 
@@ -141,7 +142,7 @@ goto submenu
 CLS
 Title Plexinator - Handbreak Tester (Step 5)
 echo Time to list the files with possible playback issues
-Powershell.exe -ExecutionPolicy Bypass -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -threads "%THREADL%"
+Powershell.exe -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -threads "%THREADL%"
 goto submenu
 
 :Automagic
@@ -159,7 +160,7 @@ echo lets put those files where they belong
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.mp4') DO "%FILEBOT%" -rename "%%G" -script fn:amc --output "%OUTPUT_DIR%" --action move --conflict skip -non-strict --log-file amc.log --def unsorted=n music=y artwork=n clean=y movieFormat="%OUTPUT_DIR%\Movies\{n} ({y})\{n} ({y})" seriesFormat="%OUTPUT_DIR%\TV Shows\{n} - {episode.special ? 'S00E'+special.pad(2) : s00e00} - {t.replaceAll(/[`´‘’ʻ]/, /'/).replaceAll(/[!?.]+$/).replacePart(', Part $1')}{'.'+lang}" "ut_label=%L" "ut_state=%S" "ut_title=%N" "ut_kind=%K" "ut_file=%F" "ut_dir=%D"
 Title Plexinator - Handbreak Tester (Step 5)
 echo Time to list the files with possible playback issues
-Powershell.exe -ExecutionPolicy Bypass -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -threads "%THREADL%"
+Powershell.exe -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -threads "%THREADL%"
 goto Menu
 
 :DISTRIBUTED_MAGIC
