@@ -62,17 +62,17 @@ IF %PREREQ%==3 goto ADDITIONALINFO
 
 :ADDITIONALINFO
 SET /P HANDBRAKE_CLI=Enter the full handbreakcli.exe location ex: X:\mine\handbreakcli.exe here:
-IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=%~dp0\PREREQS\HandBrakeCLI.exe
+IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=%~dp0"PREREQS\HandBrakeCLI.exe"
 SET /P FFMPG=Enter the full ffmpeg.exe location ex: X:\mine\ffmpeg.exe here:
-IF "%FFMPG%"=="" SET FFMPG=%~dp0\PREREQS\ffmpeg.exe
+IF "%FFMPG%"=="" SET FFMPG=%~dp0"PREREQS\ffmpeg.exe"
 
 :BEGIN
 SET /P OUTPUT_DIR=Enter your Video file output directory here:
 IF "%OUTPUT_DIR%"=="" SET OUTPUT_DIR=%~dp0
-IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=%~dp0\PREREQS\HandBrakeCLI.exe
-IF "%FFMPG%"=="" SET FFMPG=%~dp0\PREREQS\ffmpeg.exe
+IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=%~dp0"PREREQS\HandBrakeCLI.exe"
+IF "%FFMPG%"=="" SET FFMPG=%~dp0"PREREQS\ffmpeg.exe"
 SET /P FILEBOT=Enter the full filebot.exe location ex: X:\mine\filebot.exe here:
-IF "%FILEBOT%"=="" SET FILEBOT=%~dp0\PREREQS\filebot
+IF "%FILEBOT%"=="" SET FILEBOT=%~dp0"PREREQS\filebot"
 SET LIBARYCHECK=E:\Plexinator\PREREQS\LibaryCheck.ps1
 SET /a THREADA=%NUMBER_OF_PROCESSORS% / 2 + (%NUMBER_OF_PROCESSORS%/2/2)
 IF /I "%THREADA%" LEQ "1" SET /a THREADA=0
