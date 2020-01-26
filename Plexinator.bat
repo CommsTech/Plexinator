@@ -65,6 +65,8 @@ SET /P HANDBRAKE_CLI=Enter the full handbreakcli.exe location ex: X:\mine\handbr
 IF "%HANDBRAKE_CLI%"=="" SET HANDBRAKE_CLI=%~dp0PREREQS\HandBrakeCLI
 SET /P FFMPG=Enter the full ffmpeg.exe location ex: X:\mine\ffmpeg.exe here:
 IF "%FFMPG%"=="" SET FFMPG=%~dp0PREREQS\ffmpeg
+SET /P FFPROB=Enter the full ffprobe.exe location ex: X:\mine\ffprobe.exe here:
+IF "%FFPROB%"=="" SET FFPROB=%~dp0PREREQS\ffprobe
 
 :BEGIN
 SET /P OUTPUT_DIR=Enter your Video file output directory here:
@@ -82,6 +84,10 @@ IF /I "%THREADS%" GEQ "5" SET /a THREADL=4
 echo What is the directory of your video files
 SET /P WORK_DIR=Enter your directory here:
 IF "%WORK_DIR%"=="" SET WORK_DIR=%~dp0
+set "ProbeOptions=-v quiet -show_entries "stream^^=codec_name" -of json"
+set "MpegOptions=-hide_banner -fflags +genpts+discardcorrupt+fastseek -analyzeduration 100M -probesize 50M -hwaccel dxva2 -y -threads %THREADS% -v error -stats"
+set "FilesFound=0"
+set "FilesEncoded=0"
 
 CD /D %WORK_DIR%
 
@@ -119,7 +125,48 @@ Title Plexinator - Handbreak Conversion (Step 2)
 echo Lets start with file conversions
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV') DO "%HANDBRAKE_CLI%" -i "%%G" -o "%OUTPUT_DIR%\%%~nG.mp4" --preset="Fast 1080p30" --optimize
 Title Plexinator - FFMPEG REMUX (Step 2.1)
-ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart
+for /F "delims=" %%I IN ('DIR *.mkv *.mp4 /A-D-H /B /S 2^>nul') do (
+    set "FullFileName=%%I"
+    set "TempFileName=%%~dpnI_new%%~xI"
+    set "AudioCodec="
+    set "AudioOption=ac3"
+    set "VideoCodec="
+    set "VideoOption=h264_nvenc"
+    set /A FilesFound+=1
+
+    for /F "eol={ tokens=1,2 delims=,:[ ]{} " %%B in ('""%ffprob%" %ProbeOptions% "%%I""') do (
+        if "%%~B" == "codec_name" (
+            if not defined VideoCodec (
+                set "VideoCodec=%%~C"
+                if "%%~C" == "h264" set "VideoOption=copy"
+            ) else (
+                set "AudioCodec=%%~C"
+                if "%%~C" == "ac3" set "AudioOption=copy"
+            )
+        )
+    )
+
+    setlocal EnableDelayedExpansion
+    echo(
+    echo File: !FullFileName!
+    echo Video codec: !VideoCodec!
+    echo Audio codec: !AudioCodec!
+    if not "!VideoOption!" == "!AudioOption!" (
+        "%ffmpg%" %MpegOptions% -i "!FullFileName!" -c:v !VideoOption! -c:a !AudioOption! "!TempFileName!"
+        if not errorlevel 1 (
+            move /Y "!TempFileName!" "!FullFileName!"
+            if not errorlevel 1 set /A FilesEncoded+=1
+        )
+        if exist "!TempFileName!" del "!TempFileName!"
+    )
+    endlocal
+)
+
+if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
+echo(
+echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
+endlocal
+pause
 goto submenu
 
 :Optimizer
@@ -149,7 +196,48 @@ Title Plexinator - Handbreak Conversion (Step 2)
 echo Lets start with file conversions
 FOR /F "tokens=*" %%G IN ('DIR /B /S *.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV') DO "%HANDBRAKE_CLI%" -i "%%G" -o "%OUTPUT_DIR%\%%~nG.mp4" --preset="Fast 1080p30" --optimize
 Title Plexinator - FFMPEG REMUX (Step 2.1)
-ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart
+for /F "delims=" %%I IN ('DIR *.mkv *.mp4 /A-D-H /B /S 2^>nul') do (
+    set "FullFileName=%%I"
+    set "TempFileName=%%~dpnI_new%%~xI"
+    set "AudioCodec="
+    set "AudioOption=ac3"
+    set "VideoCodec="
+    set "VideoOption=h264_nvenc"
+    set /A FilesFound+=1
+
+    for /F "eol={ tokens=1,2 delims=,:[ ]{} " %%B in ('""%ffprob%" %ProbeOptions% "%%I""') do (
+        if "%%~B" == "codec_name" (
+            if not defined VideoCodec (
+                set "VideoCodec=%%~C"
+                if "%%~C" == "h264" set "VideoOption=copy"
+            ) else (
+                set "AudioCodec=%%~C"
+                if "%%~C" == "ac3" set "AudioOption=copy"
+            )
+        )
+    )
+
+    setlocal EnableDelayedExpansion
+    echo(
+    echo File: !FullFileName!
+    echo Video codec: !VideoCodec!
+    echo Audio codec: !AudioCodec!
+    if not "!VideoOption!" == "!AudioOption!" (
+        "%ffmpg%" %MpegOptions% -i "!FullFileName!" -c:v !VideoOption! -c:a !AudioOption! "!TempFileName!"
+        if not errorlevel 1 (
+            move /Y "!TempFileName!" "!FullFileName!"
+            if not errorlevel 1 set /A FilesEncoded+=1
+        )
+        if exist "!TempFileName!" del "!TempFileName!"
+    )
+    endlocal
+)
+
+if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
+echo(
+echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
+endlocal
+
 Title Plexinator - FFMPEG optimizer (Step 3)
 echo time to optimize exhisting videos
 ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mp4') DO "%FFMPG%" -i "%%G" -movflags faststart -acodec copy -vcodec copy "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads%

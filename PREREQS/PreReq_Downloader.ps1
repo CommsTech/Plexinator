@@ -6,6 +6,7 @@ Expand-Archive -LiteralPath ./HandBrakeCLI.zip -DestinationPath $THEpath -Force
 Expand-Archive -LiteralPath ./ffmpeg.zip -DestinationPath $THEpath -Force
 Move-Item -Path $THEpath\HandBreakCLI.exe -Destination $THEpath\PREREQS\HandBreakCLI.exe
 Move-Item -Path $THEpath\ffmpeg-20200121-fc6fde2-win64-static\bin\ffmpeg.exe -Destination $THEpath\PREREQS\ffmpeg.exe
+Move-Item -Path $THEpath\ffmpeg-20200121-fc6fde2-win64-static\bin\ffprobe.exe -Destination $THEpath\PREREQS\ffprobe.exe
 Move-Item -Path $THEpath\FileBot_4.8.5_x64.msi -Destination $THEpath\PREREQS\FileBot_4.8.5_x64.msi
 Start-Process .\PREREQS\FileBot_4.8.5_x64.msi
 Remove-Item -Path $THEpath\ffmpeg.zip
