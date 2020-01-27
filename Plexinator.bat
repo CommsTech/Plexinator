@@ -95,7 +95,7 @@ set "FilesEncoded=0"
 SET "AudioCodec="
 SET "AudioOption=ac3"
 SET "VideoCodec="
-SET "VideoOption=h264_nvenc"
+SET "VideoOption=h264"
 SET /A FilesFound+=1
 REM Overall Options
 SET "HBOPTIONS=--preset="Fast 1080p30" --optimize"
