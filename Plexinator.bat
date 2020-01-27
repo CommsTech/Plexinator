@@ -85,7 +85,7 @@ echo What is the directory of your video files
 SET /P WORK_DIR=Enter your directory here:
 IF "%WORK_DIR%"=="" SET WORK_DIR=%~dp0
 REM HANDBREAK OPTIONS
-SET "HANDBREAKOPTIONS="
+SET "HBOPTIONS=--preset="HQ 1080p30 Surround" --optimize"
 SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV"
 REM FFMPEG and FFPROBE OPTIONS
 set "ProbeOptions=-v quiet -show_entries "stream^^=codec_name" -of json"
@@ -93,12 +93,11 @@ set "MpegOptions=-hide_banner -fflags +genpts+discardcorrupt+fastseek -analyzedu
 set "FilesFound=0"
 set "FilesEncoded=0"
 SET "AudioCodec="
-SET "AudioOption=ac3"
+SET "AudioOption=aac"
 SET "VideoCodec="
 SET "VideoOption=h264"
 SET /A FilesFound+=1
 REM Overall Options
-SET "HBOPTIONS=--preset="Fast 1080p30" --optimize"
 SET "FULLFILENAME=%%I"
 SET "TEMPFILENAME=%%~dpnI_new.mp4"
 SET /A FilesFound+=1
@@ -139,6 +138,9 @@ Title Plexinator - Handbreak Conversion (Step 2)
 echo Lets start with file conversions
 FOR /F "tokens=*" %%I IN ('DIR /B /S %HBFILETYPES%') do (
     setlocal EnableDelayedExpansion
+    setlocal EnableExtensions DisableDelayedExpansion
+set "FilesFound=0"
+set "FilesEncoded=0"
     echo(
     echo File: %FULLFILENAME%
    "%HANDBRAKE_CLI%" -i "%FULLFILENAME%" -o "%TEMPFILENAME%" %HBOPTIONS%
@@ -175,7 +177,7 @@ for /F "delims=" %%I in ('dir *.mp4 /A-D-H /B /S 2^>nul') do (
                 if "%%~C" == "h264" set "VideoOption=copy"
             ) else (
                 set "AudioCodec=%%~C"
-                if "%%~C" == "ac3" set "AudioOption=copy"
+                if "%%~C" == "aac" set "AudioOption=copy"
             )
         )
     )
