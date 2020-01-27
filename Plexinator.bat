@@ -89,9 +89,14 @@ SET "HANDBREAKOPTIONS="
 SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV"
 REM FFMPEG and FFPROBE OPTIONS
 set "ProbeOptions=-v quiet -show_entries "stream^^=codec_name" -of json"
-set "MpegOptions=-hide_banner -fflags +genpts+discardcorrupt+fastseek -analyzeduration 100M -probesize 50M -hwaccel dxva2 -y -threads %THREADS% -v error -stats  -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart"
+set "MpegOptions=-hide_banner -fflags +genpts+discardcorrupt+fastseek -analyzeduration 100M -probesize 50M -hwaccel dxva2 -y -threads %THREADS% -v error -stats"
 set "FilesFound=0"
 set "FilesEncoded=0"
+SET "AudioCodec="
+SET "AudioOption=ac3"
+SET "VideoCodec="
+SET "VideoOption=h264_nvenc"
+SET /A FilesFound+=1
 REM Overall Options
 SET "HBOPTIONS=--preset="Fast 1080p30" --optimize"
 SET "FULLFILENAME=%%I"
@@ -157,19 +162,13 @@ ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c c
 :Optimizer
 CLS
 Title Plexinator - FFMPEG Optimize (Step 3)
-@echo off
 setlocal EnableExtensions DisableDelayedExpansion
 set "FilesFound=0"
 set "FilesEncoded=0"
 
 for /F "delims=" %%I in ('dir *.mp4 /A-D-H /B /S 2^>nul') do (
-    set "AudioCodec="
-    set "AudioOption=ac3"
-    set "VideoCodec="
-    set "VideoOption=h264_nvenc"
-    set /A FilesFound+=1
 
-    for /F "eol={ tokens=1,2 delims=,:[ ]{} " %%B in ('""%FFMPG%" %ProbeOptions% "%%I""') do (
+    for /F "eol={ tokens=1,2 delims=,:[ ]{} " %%B in ('%FFPROB% %ProbeOptions% %%I') do (
         if "%%~B" == "codec_name" (
             if not defined VideoCodec (
                 set "VideoCodec=%%~C"
@@ -180,19 +179,20 @@ for /F "delims=" %%I in ('dir *.mp4 /A-D-H /B /S 2^>nul') do (
             )
         )
     )
-
+setlocal EnableDelayedExpansion
     echo(
     echo File: %FullFileName%
     echo Video codec: %VideoCodec%
     echo Audio codec: %AudioCodec%
     if not "%VideoOption%" == "%AudioOption%" (
-        "%ProgramFolder%\ffmpeg.exe" %MpegOptions% -i "%FullFileName%" -c:v %VideoOption% -c:a %AudioOption% "%TempFileName%"
+        "%FFMPG%" %MpegOptions% -i "%FullFileName%" -movflags faststart -c:v %VideoOption% -c:a %AudioOption% "%TempFileName%"
         if not errorlevel 1 (
             move /Y "%TempFileName%" "%FullFileName%"
             if not errorlevel 1 set /A FilesEncoded+=1
         )
         if exist "%TempFileName%" del "%TempFileName%"
     )
+    endlocal
 )
 
 if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
@@ -241,13 +241,13 @@ echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
 Title Plexinator - FFMPEG REMUX (Step 2.1)
 ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart
 Title Plexinator - FFMPEG Optimize (Step 3)
-for /F "delims=" %%I IN ('DIR *.mp4 /A-D-H /B /S 2^>nul') do (
-    set "AudioCodec="
-    set "AudioOption=ac3"
-    set "VideoCodec="
-    set "VideoOption=h264_nvenc"
+setlocal EnableExtensions DisableDelayedExpansion
+set "FilesFound=0"
+set "FilesEncoded=0"
 
-    for /F "eol={ tokens=1,2 delims=,:[ ]{} " %%B in ('""%ffprob%" %ProbeOptions% "%%I""') do (
+for /F "delims=" %%I in ('dir *.mp4 /A-D-H /B /S 2^>nul') do (
+
+    for /F "eol={ tokens=1,2 delims=,:[ ]{} " %%B in ('%FFPROB% %ProbeOptions% %%I') do (
         if "%%~B" == "codec_name" (
             if not defined VideoCodec (
                 set "VideoCodec=%%~C"
@@ -258,16 +258,15 @@ for /F "delims=" %%I IN ('DIR *.mp4 /A-D-H /B /S 2^>nul') do (
             )
         )
     )
-
-    setlocal EnableDelayedExpansion
+setlocal EnableDelayedExpansion
     echo(
     echo File: %FullFileName%
     echo Video codec: %VideoCodec%
     echo Audio codec: %AudioCodec%
     if not "%VideoOption%" == "%AudioOption%" (
-        "%ffmpg%" %MpegOptions% -i "%FullFileName%" -c:v %VideoOption% -c:a %AudioOption% "%TempFileName%" -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart
+        "%FFMPG%" %MpegOptions% -i "%FullFileName%" -movflags faststart -c:v %VideoOption% -c:a %AudioOption% "%TempFileName%"
         if not errorlevel 1 (
-            move /Y "!TempFileName!" "%FullFileName%"
+            move /Y "%TempFileName%" "%FullFileName%"
             if not errorlevel 1 set /A FilesEncoded+=1
         )
         if exist "%TempFileName%" del "%TempFileName%"
@@ -276,7 +275,7 @@ for /F "delims=" %%I IN ('DIR *.mp4 /A-D-H /B /S 2^>nul') do (
 )
 
 if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
-
+echo(
 echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
 endlocal
 Title Plexinator - FileBot Orginiation (Step 4)
