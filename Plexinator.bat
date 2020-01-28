@@ -160,6 +160,8 @@ echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
 Title Plexinator - FFMPEG REMUX (Step 2.1)
 ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart
 
+pause
+goto submenu
 
 :Optimizer
 CLS
@@ -201,7 +203,9 @@ if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
 echo(
 echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
 endlocal
+
 pause
+
 goto submenu
 
 :Filer
