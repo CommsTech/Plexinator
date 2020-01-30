@@ -7,12 +7,14 @@ Prereqs
 3. filebot.exe https://www.filebot.net/#download  
 4. Video files to optimize  
 Libary Validator script pulled from: https://github.com/PNRxA/corrupted-media-scanner  
+5. Duplicate file finder pulled from https://github.com/0x90d/videoduplicatefinder
   
 Plexinator_Setup_Wizard.bat (Used to set variables and download prereqs)  
 Must run Plexinator_Setup_Wizard.bat prior to using Plexinator.bat  
 
 Plexinator.bat (The script that does the stuff)  
-Step 1 : Set Working Directory  
+Step 1 : Set Working Directory
+Step 1.1: (Optional) Remove Duplicates
 Step 2 : HandBreakcli Conversion from ts,m4v,mov,avi,flv,Mpeg to MP4 Web optimised  
     * Note All Handbreak Converted Videos will replace the originals in the originals folder. (this will delete the original)  
 Step 2.1 : MKV to MP4 Conversion

@@ -76,11 +76,13 @@ IF "%FFMPG%"=="" SET FFMPG=%~dp0PREREQS\ffmpeg
 SET /P FILEBOT=Enter the full filebot.exe location ex: X:\mine\filebot.exe here:
 IF "%FILEBOT%"=="" SET FILEBOT=%~dp0PREREQS\filebot
 SET LIBARYCHECK=E:\Plexinator\PREREQS\LibaryCheck.ps1
+SET VDF=%~dp0PREREQS\VDF.Windows-x64\VideoDuplicateFinderConsole.exe
 SET /a THREADA=%NUMBER_OF_PROCESSORS% / 2 + (%NUMBER_OF_PROCESSORS%/2/2)
 IF /I "%THREADA%" LEQ "1" SET /a THREADA=0
 SET /P THREADS=Enter the number of threads you want to use ( We recommend %THREADA% )
 IF "%THREADS%"=="" SET THREADS=%THREADA%
 IF /I "%THREADS%" GEQ "5" SET /a THREADL=4
+:VFDIR
 echo What is the directory of your video files
 SET /P WORK_DIR=Enter your directory here:
 IF "%WORK_DIR%"=="" SET WORK_DIR=%~dp0
@@ -116,21 +118,27 @@ IF %MENUSELECT%==3 goto DISTRIBUTED_MAGIC
 
 :Submenu
 echo
-echo 1. Converter
-echo 2. Optimizer
-echo 3. Filer
-echo 4. Tester
-echo 5. Automagic
-echo 6. New Video Folder
+echo 1. Duplicate remover
+echo 2. Converter
+echo 3. Optimizer
+echo 4. Filer
+echo 5. Tester
+echo 6. Automagic
+echo 7. New Video Folder
 
 set /p SUBMENUSELECT=Type Your Choice then press ENTER :
-IF %SUBMENUSELECT%==1 goto Converter
-IF %SUBMENUSELECT%==2 goto Optimizer
-IF %SUBMENUSELECT%==3 goto Filer
-IF %SUBMENUSELECT%==4 goto Tester
-IF %SUBMENUSELECT%==5 goto Automagic
-IF %SUBMENUSELECT%==6 goto BEGIN
+IF %SUBMENUSELECT%==1 goto DeDup
+IF %SUBMENUSELECT%==2 goto Converter
+IF %SUBMENUSELECT%==3 goto Optimizer
+IF %SUBMENUSELECT%==4 goto Filer
+IF %SUBMENUSELECT%==5 goto Tester
+IF %SUBMENUSELECT%==6 goto Automagic
+IF %SUBMENUSELECT%==7 goto VFDIR
 
+:DeDup
+Title Plexinator - Handbreak Conversion (Step 1.1)
+echo Lets start with file de Duplication
+%VDF% - i %WORK_DIR% -r -p 98 -clean
 
 :Converter
 CLS
@@ -157,6 +165,8 @@ set "FilesEncoded=0"
 if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
 echo
 echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
+endlocal
+
 Title Plexinator - FFMPEG REMUX (Step 2.1)
 ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart
 
