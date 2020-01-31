@@ -28,4 +28,4 @@ Step 5 : PNRxA Script utilizing handbreak to test media libary
   
 Feel free to submit issues, commit changes and/or fork and make this better!
 
-(Update 30 Jan 2020 - Just found an amazing de duplicator and working to integrate into another option. Will soon work on migrating this from a cli automator to a GUI for ease of access)
+(Update 30 Jan 2020 - Just found an amazing de duplicator and working to integrate it into another option. Will soon work on migrating this from a cli automator to a GUI for ease of access)
