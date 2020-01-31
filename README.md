@@ -3,12 +3,13 @@ Optimize video files for plex
 
 Prereqs  
 1. Handbreakcli.exe https://handbrake.fr/downloads2.php  
-2. ffmpeg.exe https://ffmpeg.org/download.html  
-3. filebot.exe https://www.filebot.net/#download  
-4. Video files to optimize  
+2. ffmpeg.exe https://ffmpeg.org/download.html 
+3. ffprobe.exe https://ffmpeg.org/download.html  
+4. filebot.exe https://www.filebot.net/#download  
+5. Video files to optimize  
+6. Duplicate file finder pulled from https://github.com/0x90d/videoduplicatefinder
 Libary Validator script pulled from: https://github.com/PNRxA/corrupted-media-scanner  
-5. Duplicate file finder pulled from https://github.com/0x90d/videoduplicatefinder
-  
+
 Plexinator_Setup_Wizard.bat (Used to set variables and download prereqs)  
 Must run Plexinator_Setup_Wizard.bat prior to using Plexinator.bat  
 
@@ -26,3 +27,5 @@ Step 4 : Filebot to rename converted files
 Step 5 : PNRxA Script utilizing handbreak to test media libary  
   
 Feel free to submit issues, commit changes and/or fork and make this better!
+
+(Update 30 Jan 2020 - Just found an amazing de duplicator and working to integrate into another option. Will soon work on migrating this from a cli automator to a GUI for ease of access)

@@ -138,7 +138,9 @@ IF %SUBMENUSELECT%==7 goto VFDIR
 :DeDup
 Title Plexinator - Handbreak Conversion (Step 1.1)
 echo Lets start with file de Duplication
-%VDF% - i %WORK_DIR% -r -p 98 -clean
+%VDF% -i %WORK_DIR% -r -p 96
+pause
+goto submenu
 
 :Converter
 CLS
@@ -233,6 +235,9 @@ Powershell.exe -executionpolicy bypass -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -
 goto submenu
 
 :Automagic
+Title Plexinator - Handbreak Conversion (Step 1.1)
+echo Lets start with file de Duplication
+%VDF% -i %WORK_DIR% -r -p 96
 echo Automagiclly starting
 Title Plexinator - Handbreak Conversion (Step 2)
 echo Lets start with file conversions
