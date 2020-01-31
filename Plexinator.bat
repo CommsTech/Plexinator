@@ -86,8 +86,18 @@ IF /I "%THREADS%" GEQ "5" SET /a THREADL=4
 echo What is the directory of your video files
 SET /P WORK_DIR=Enter your directory here:
 IF "%WORK_DIR%"=="" SET WORK_DIR=%~dp0
+:HBO
 REM HANDBREAK OPTIONS
-SET "HBOPTIONS=--preset="HQ 1080p30 Surround" --optimize"
+ECHO What kind of Videos are in this directory?
+Echo 1. Movies (HQ 1080p W/ AAC and AC3 Tracks) Pic Qual Very High
+Echo 2. TV Shows (HQ 720p W/ AAC and AC3 Tracks) Pic Qual High
+Echo 3. Anime (720p W/ AAC Track) Pic Qual Standard
+Echo 4. Live Sports (1080p W/ AAC Track) Pic Qual Average
+SET /P HBO1=
+IF %HBO1%==1 SET "HBOPTIONS=--preset="HQ 1080p30 Surround" --optimize" 
+IF %HBO1%==2 SET "HBOPTIONS=--preset="HQ 720p30 Surround" --optimize"
+IF %HBO1%==3 SET "HBOPTIONS=--preset="Fast 720p30" --optimize"
+IF %HBO1%==4 SET "HBOPTIONS=--preset="Very Fast 1080p30" --optimize"
 SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV"
 REM FFMPEG and FFPROBE OPTIONS
 set "ProbeOptions=-v quiet -show_entries "stream^^=codec_name" -of json"
