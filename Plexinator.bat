@@ -179,7 +179,7 @@ FOR /F "tokens=*" %%I IN ('DIR /B /S *.mkv') do (
     )
 )
 Title Plexinator - FFMPEG REENCODER (Step 2.2)
-FOR /F "tokens=*" %%I IN ('DIR /B /S *.mov') do (
+FOR /F "tokens=*" %%I IN ('DIR /B /S %HBFILETYPES%') do (
     echo File: %FULLFILENAME%
    "%FFMPG%" -i "%FULLFILENAME%" -qscale 0 "%TEMPFILENAME%" -movflags faststart
         if not errorlevel 1 (
