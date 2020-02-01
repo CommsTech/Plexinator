@@ -89,10 +89,10 @@ IF "%WORK_DIR%"=="" SET WORK_DIR=%~dp0
 :HBO
 REM HANDBREAK OPTIONS
 ECHO What kind of Videos are in this directory?
-Echo 1. Movies (HQ 1080p W/ AAC and AC3 Tracks) Pic Qual Very High
-Echo 2. TV Shows (HQ 720p W/ AAC and AC3 Tracks) Pic Qual High
-Echo 3. Anime (720p W/ AAC Track) Pic Qual Standard
-Echo 4. Live Sports (1080p W/ AAC Track) Pic Qual Average
+ECHO 1. Movies (HQ 1080p W/ AAC and AC3 Tracks) Pic Qual Very High
+ECHO 2. TV Shows (HQ 720p W/ AAC and AC3 Tracks) Pic Qual High
+ECHO 3. Anime (720p W/ AAC Track) Pic Qual Standard
+ECHO 4. Live Sports (1080p W/ AAC Track) Pic Qual Average
 SET /P HBO1=
 IF %HBO1%==1 SET "HBOPTIONS=--preset="HQ 1080p30 Surround" --optimize" 
 IF %HBO1%==2 SET "HBOPTIONS=--preset="HQ 720p30 Surround" --optimize"
@@ -100,10 +100,10 @@ IF %HBO1%==3 SET "HBOPTIONS=--preset="Fast 720p30" --optimize"
 IF %HBO1%==4 SET "HBOPTIONS=--preset="Very Fast 1080p30" --optimize"
 SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV"
 REM FFMPEG and FFPROBE OPTIONS
-set "ProbeOptions=-v quiet -show_entries "stream^^=codec_name" -of json"
-set "MpegOptions=-hide_banner -fflags +genpts+discardcorrupt+fastseek -analyzeduration 100M -probesize 50M -hwaccel dxva2 -y -threads %THREADS% -v error -stats"
-set "FilesFound=0"
-set "FilesEncoded=0"
+SET "ProbeOptions=-v quiet -show_entries "stream^^=codec_name" -of json"
+SET "MpegOptions=-hide_banner -fflags +genpts+discardcorrupt+fastseek -analyzeduration 100M -probesize 50M -hwaccel dxva2 -y -threads %THREADS% -v error -stats"
+SET "FilesFound=0"
+SET "FilesEncoded=0"
 SET "AudioCodec="
 SET "AudioOption=aac"
 SET "VideoCodec="
@@ -117,11 +117,10 @@ SET /A FilesFound+=1
 CD /D %WORK_DIR%
 
 :Menu
-echo
-echo 1. By the numbers
-echo 2. Automagic
-echo 3. Attempt to share the wealth with other computers Automagically (coming soon)
-set /p MENUSELECT=Type Your Choice then press ENTER :
+ECHO 1. By the numbers
+ECHO 2. Automagic
+ECHO 3. Attempt to share the wealth with other computers Automagically (coming soon)
+SET /p MENUSELECT=Type Your Choice then press ENTER :
 IF %MENUSELECT%==1 goto Submenu
 IF %MENUSELECT%==2 goto Automagic
 IF %MENUSELECT%==3 goto DISTRIBUTED_MAGIC
@@ -157,11 +156,6 @@ CLS
 Title Plexinator - Handbreak Conversion (Step 2)
 echo Lets start with file conversions
 FOR /F "tokens=*" %%I IN ('DIR /B /S %HBFILETYPES%') do (
-    setlocal EnableDelayedExpansion
-    setlocal EnableExtensions DisableDelayedExpansion
-set "FilesFound=0"
-set "FilesEncoded=0"
-    echo(
     echo File: %FULLFILENAME%
    "%HANDBRAKE_CLI%" -i "%FULLFILENAME%" -o "%TEMPFILENAME%" %HBOPTIONS%
         if not errorlevel 1 (
@@ -171,17 +165,31 @@ set "FilesEncoded=0"
         if exist "%TEMPFILENAME%" del "%TEMPFILENAME%"
         if exist "%%~dpnI.mp4" del "%FULLFILENAME%"
     )
-    endlocal
 )
-
-if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
-echo
-echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
-endlocal
-
 Title Plexinator - FFMPEG REMUX (Step 2.1)
-ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart
-
+FOR /F "tokens=*" %%I IN ('DIR /B /S *.mkv') do (
+    echo File: %FULLFILENAME%
+   "%FFMPG%" -i "%FULLFILENAME%" -c copy -map 0 "%TEMPFILENAME%" -movflags faststart
+        if not errorlevel 1 (
+            move /Y "%TEMPFILENAME%" "%%~dpnI.mp4""
+            if not errorlevel 1 set /A FilesEncoded+=1
+        )
+        if exist "%TEMPFILENAME%" del "%TEMPFILENAME%"
+        if exist "%%~dpnI.mp4" del "%FULLFILENAME%"
+    )
+)
+Title Plexinator - FFMPEG REENCODER (Step 2.2)
+FOR /F "tokens=*" %%I IN ('DIR /B /S *.mov') do (
+    echo File: %FULLFILENAME%
+   "%FFMPG%" -i "%FULLFILENAME%" -qscale 0 "%TEMPFILENAME%" -movflags faststart
+        if not errorlevel 1 (
+            move /Y "%TEMPFILENAME%" "%%~dpnI.mp4""
+            if not errorlevel 1 set /A FilesEncoded+=1
+        )
+        if exist "%TEMPFILENAME%" del "%TEMPFILENAME%"
+        if exist "%%~dpnI.mp4" del "%FULLFILENAME%"
+    )
+)
 pause
 goto submenu
 
@@ -270,7 +278,7 @@ if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
 echo
 echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
 Title Plexinator - FFMPEG REMUX (Step 2.1)
-ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -filter_threads %threads% -filter_complex_threads %threads% -movflags faststart
+ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -movflags faststart
 Title Plexinator - FFMPEG Optimize (Step 3)
 setlocal EnableExtensions DisableDelayedExpansion
 set "FilesFound=0"
