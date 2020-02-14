@@ -100,7 +100,7 @@ IF %HBO1%==3 SET "HBOPTIONS=--preset="Fast 720p30" --optimize"
 IF %HBO1%==4 SET "HBOPTIONS=--preset="Very Fast 1080p30" --optimize"
 SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV"
 REM FFMPEG and FFPROBE OPTIONS
-SET "ProbeOptions=-v quiet -show_entries "stream^^=codec_name" -of json"
+SET "ProbeOptions=-loglevel error -show_entries stream=codec_name -of default=nw=1"
 SET "MpegOptions=-hide_banner -fflags +genpts+discardcorrupt+fastseek -analyzeduration 100M -probesize 50M -hwaccel dxva2 -y -threads %THREADS% -v error -stats"
 SET "FilesFound=0"
 SET "FilesEncoded=0"
@@ -178,18 +178,6 @@ FOR /F "tokens=*" %%I IN ('DIR /B /S *.mkv') do (
         if exist "%%~dpnI.mp4" del "%FULLFILENAME%"
     )
 )
-Title Plexinator - FFMPEG REENCODER (Step 2.2)
-FOR /F "tokens=*" %%I IN ('DIR /B /S %HBFILETYPES%') do (
-    echo File: %FULLFILENAME%
-   "%FFMPG%" -i "%FULLFILENAME%" -qscale 0 "%TEMPFILENAME%" -movflags faststart
-        if not errorlevel 1 (
-            move /Y "%TEMPFILENAME%" "%%~dpnI.mp4""
-            if not errorlevel 1 set /A FilesEncoded+=1
-        )
-        if exist "%TEMPFILENAME%" del "%TEMPFILENAME%"
-        if exist "%%~dpnI.mp4" del "%FULLFILENAME%"
-    )
-)
 pause
 goto submenu
 
@@ -200,31 +188,39 @@ setlocal EnableExtensions DisableDelayedExpansion
 set "FilesFound=0"
 set "FilesEncoded=0"
 
-for /F "delims=" %%I in ('dir *.mp4 /A-D-H /B /S 2^>nul') do (
+for /F "delims=" %%I in ('dir *.mkv *.mp4 /A-D-H /B /S 2^>nul') do (
+    set "FullFileName=%%I"
+    set "TempFileName=%%~dpnI_new%%~xI"
+    set "AudioCodec="
+    set "AudioOption=ac3"
+    set "VideoCodec="
+    set "VideoOption=h264"
+    set /A FilesFound+=1
 
-    for /F "eol={ tokens=1,2 delims=,:[ ]{} " %%B in ('%FFPROB% %ProbeOptions% %%I') do (
-        if "%%~B" == "codec_name" (
+    for /F "eol={ tokens=1,2 delims=,:[ ]{} " %%B in ('"%FFPROB% %ProbeOptions% "%%I""') do (
+         if "%%~B" == "codec_name" (
             if not defined VideoCodec (
                 set "VideoCodec=%%~C"
                 if "%%~C" == "h264" set "VideoOption=copy"
             ) else (
                 set "AudioCodec=%%~C"
-                if "%%~C" == "aac" set "AudioOption=copy"
+                if "%%~C" == "ac3" set "AudioOption=copy"
             )
         )
     )
-setlocal EnableDelayedExpansion
+
+    setlocal EnableDelayedExpansion
     echo(
-    echo File: %FullFileName%
-    echo Video codec: %VideoCodec%
-    echo Audio codec: %AudioCodec%
-    if not "%VideoOption%" == "%AudioOption%" (
-        "%FFMPG%" %MpegOptions% -i "%FullFileName%" -movflags faststart -c:v %VideoOption% -c:a %AudioOption% "%TempFileName%"
+    echo File: !FullFileName!
+    echo Video codec: !VideoCodec!
+    echo Audio codec: !AudioCodec!
+    if not "!VideoOption!" == "!AudioOption!" (
+        "%FFMPG%" %MpegOptions% -i "!FullFileName!" -c:v !VideoOption! -c:a !AudioOption! "!TempFileName!"
         if not errorlevel 1 (
-            move /Y "%TempFileName%" "%FullFileName%"
+            move /Y "!TempFileName!" "!FullFileName!"
             if not errorlevel 1 set /A FilesEncoded+=1
         )
-        if exist "%TempFileName%" del "%TempFileName%"
+        if exist "!TempFileName!" del "!TempFileName!"
     )
     endlocal
 )
@@ -233,7 +229,6 @@ if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
 echo(
 echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
 endlocal
-
 pause
 
 goto submenu

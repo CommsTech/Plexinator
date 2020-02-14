@@ -18,8 +18,9 @@ Step 1.1: (Optional) Remove Duplicates
 Step 2 : HandBreakcli Conversion from ts,m4v,mov,avi,flv,Mpeg to MP4 Web optimised  
         * Note All Handbreak Converted Videos will replace the originals in the originals folder. (this will delete the original)  
 Step 2.1 : MKV to MP4 Conversion  
-Step 3 : FFMPEG to Optimize exhisting .MP4 files (current issue is all .mp4's get optimised even if they dont need it)  
-        * Note All FFMPEG REMUXED Videos will replace the originals in the originals folder. (this will delete the original)  
+Step 3 : FFMPEG to Optimize existing .MP4 files (current issue is all .mp4's get optimised even if they dont need it | 14 Feb 2020)  
+        * Note All FFMPEG REMUXED Videos will replace the originals in the originals folder. (this will delete the original)    
+
 Step 4 : Filebot to rename converted files  
       * Note Filebot gets the name wrong often so i find myself correcting this issue so currently Filebot spits out the renamed  
            Files into the Output directory  
