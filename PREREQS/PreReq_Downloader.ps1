@@ -3,7 +3,7 @@ Write-Host Now Downloading HandBrakeCLI
 Invoke-WebRequest https://github.com/HandBrake/HandBrake/releases/download/1.3.1/HandBrakeCLI-1.3.1-win-x86_64.zip -OutFile ./HandBrakeCLI.zip
 Write-Host HandBrakeCLI Download Complete
 Write-Host Now Downloading FFMPEG Files
-Invoke-WebRequest https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-20200131-62d92a8-win64-static.zip -OutFile ./ffmpeg.zip
+Invoke-WebRequest https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-20200216-8578433-win64-static.zip -OutFile ./ffmpeg.zip
 Write-Host FFMPEG Download Complete
 Write-Host Now Downloading Filebot
 Invoke-WebRequest https://get.filebot.net/filebot/FileBot_4.8.5/FileBot_4.8.5_x64.msi -OutFile ./FileBot.msi
