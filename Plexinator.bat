@@ -99,7 +99,7 @@ IF %HBO1%==1 SET "HBOPTIONS=--preset="HQ 1080p30 Surround" --optimize"
 IF %HBO1%==2 SET "HBOPTIONS=--preset="HQ 720p30 Surround" --optimize"
 IF %HBO1%==3 SET "HBOPTIONS=--preset="Fast 720p30" --optimize"
 IF %HBO1%==4 SET "HBOPTIONS=--preset="Very Fast 1080p30" --optimize"
-IF %HBO1%==5 SET "HBOPTIONS=-c:v libx264 -crf 27 -x264-params cabac=1:ref=5:analyse=0x133:me=umh:subme=9:chroma-me=1:deadzone-inter=21:deadzone-intra=11:b-adapt=2:rc-lookahead=60:vbv-maxrate=10000:vbv-bufsize=10000:qpmax=69:bframes=5:b-adapt=2:direct=auto:crf-max=51:weightp=2:merange=24:chroma-qp-offset=-1:sync-lookahead=2:psy-rd=1.00,0.15:trellis=2:min-keyint=23:partitions=all -c:a aac -ar 44100 -b:a 128k -map 0 --optimize"
+IF %HBO1%==5 SET "HBOPTIONS=-E ffaac -B 96k -6 stereo -R 44.1 -e x264 -q 27 -x cabac=1:ref=5:analyse=0x133:me=umh:subme=9:chroma-me=1:deadzone-inter=21:deadzone-intra=11:b-adapt=2:rc-lookahead=60:vbv-maxrate=10000:vbv-bufsize=10000:qpmax=69:bframes=5:b-adapt=2:direct=auto:crf-max=51:weightp=2:merange=24:chroma-qp-offset=-1:sync-lookahead=2:psy-rd=1.00,0.15:trellis=2:min-keyint=23:partitions=all --optimize"
 SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV"
 REM FFMPEG and FFPROBE OPTIONS
 SET "ProbeOptions=-loglevel error -show_entries stream=codec_name -of default=nw=1"
