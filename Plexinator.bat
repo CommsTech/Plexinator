@@ -182,7 +182,7 @@ FOR /F "tokens=*" %%I IN ('DIR /B /S %HBFILETYPES%') do (
 Title Plexinator - FFMPEG REMUX (Step 2.1)
 FOR /F "tokens=*" %%I IN ('DIR /B /S *.mkv') do (
     echo File: %FULLFILENAME%
-   "%FFMPG%" -i "%FULLFILENAME%" -c copy -map 0 "%TEMPFILENAME%" -movflags faststart
+   "%FFMPG%" -i "%FULLFILENAME%" -c copy "%TEMPFILENAME%" -movflags faststart
         if not errorlevel 1 (
             move /Y "%TEMPFILENAME%" "%%~dpnI.mp4""
             if not errorlevel 1 set /A FilesEncoded+=1
@@ -314,7 +314,7 @@ if %FilesFound% == 1 (set "PluralS=") else set "PluralS=s"
 echo
 echo Re-encoded %FilesEncoded% of %FilesFound% video file%PluralS%.
 Title Plexinator - FFMPEG REMUX (Step 2.1)
-ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy -map 0 "%OUTPUT_DIR%\%%~nG.mp4" -movflags faststart
+ECHO N | FOR /F "tokens=*" %%G IN ('DIR /B /S *.mkv') DO "%FFMPG%" -i "%%G" -c copy "%OUTPUT_DIR%\%%~nG.mp4" -movflags faststart
 Title Plexinator - FFMPEG Optimize (Step 3)
 setlocal EnableExtensions DisableDelayedExpansion
 set "FilesFound=0"
