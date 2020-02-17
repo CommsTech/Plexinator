@@ -93,11 +93,13 @@ ECHO 1. Movies (HQ 1080p W/ AAC and AC3 Tracks) Pic Qual Very High
 ECHO 2. TV Shows (HQ 720p W/ AAC and AC3 Tracks) Pic Qual High
 ECHO 3. Anime (720p W/ AAC Track) Pic Qual Standard
 ECHO 4. Live Sports (1080p W/ AAC Track) Pic Qual Average
+ECHO 5. Any YIFY Settings (1080p W/AAC Track) Pic Qual High (smaller size)
 SET /P HBO1=
 IF %HBO1%==1 SET "HBOPTIONS=--preset="HQ 1080p30 Surround" --optimize" 
 IF %HBO1%==2 SET "HBOPTIONS=--preset="HQ 720p30 Surround" --optimize"
 IF %HBO1%==3 SET "HBOPTIONS=--preset="Fast 720p30" --optimize"
 IF %HBO1%==4 SET "HBOPTIONS=--preset="Very Fast 1080p30" --optimize"
+IF %HBO1%==5 SET "HBOPTIONS=-c:v libx264 -crf 27 -x264-params cabac=1:ref=5:analyse=0x133:me=umh:subme=9:chroma-me=1:deadzone-inter=21:deadzone-intra=11:b-adapt=2:rc-lookahead=60:vbv-maxrate=10000:vbv-bufsize=10000:qpmax=69:bframes=5:b-adapt=2:direct=auto:crf-max=51:weightp=2:merange=24:chroma-qp-offset=-1:sync-lookahead=2:psy-rd=1.00,0.15:trellis=2:min-keyint=23:partitions=all -c:a aac -ar 44100 -b:a 128k -map 0 --optimize"
 SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV"
 REM FFMPEG and FFPROBE OPTIONS
 SET "ProbeOptions=-loglevel error -show_entries stream=codec_name -of default=nw=1"
@@ -134,6 +136,7 @@ echo 4. Filer
 echo 5. Tester
 echo 6. Automagic
 echo 7. New Video Folder
+echo 8. Additional Tools
 
 set /p SUBMENUSELECT=Type Your Choice then press ENTER :
 IF %SUBMENUSELECT%==1 goto DeDup
@@ -143,6 +146,16 @@ IF %SUBMENUSELECT%==4 goto Filer
 IF %SUBMENUSELECT%==5 goto Tester
 IF %SUBMENUSELECT%==6 goto Automagic
 IF %SUBMENUSELECT%==7 goto VFDIR
+IF %SUBMENUSELECT%==8 goto ADDTOOLS
+
+:ADDTOOLS
+CLS
+Title Plexinator - Additional Tools
+echo What Else would you like to do
+echo 1. Spit an Episode 
+
+Set /P ADDTOOLOP=Type Your Choice then press ENTER:
+IF %ADDTOOLOP%==1 goto SplitEpisode
 
 :DeDup
 Title Plexinator - Handbreak Conversion (Step 1.1)
@@ -246,6 +259,34 @@ Title Plexinator - Handbreak Tester (Step 5)
 echo Time to list the files with possible playback issues
 Powershell.exe -executionpolicy bypass -File "%LIBARYCHECK%" -dir "%WORK_DIR%" -threads "%THREADL%"
 goto submenu
+
+:SplitEpisode
+CLS
+Title Plexinator - FFMPEG Episode Splitter
+Echo Lets Split an episode for you
+Echo Lets find this dual episode
+SET /P EPISODELOCATION=where is this dual episode located? ex: X:\mine\ here:
+IF "%EPISODELOCATION%"=="" goto Submenu
+SET /P EPISODENAME=what is this dual episode Name? ex: Dual_Episode.mp4 here:
+IF "%EPISODENAME%"=="" goto Submenu
+echo lets setup the first episode
+SET /P EPISODEoutput1=what is the first episode Name? ex: Episode1 here:
+IF "%EPISODEoutput1%"=="" SET "EPISODEoutput1=Episode1"
+SET /P STARTTIME1=what is the first episode Start time? ex: 00:00:00 here:
+IF "%STARTTIME1%"=="" SET "STARTTIME1=00:00:00"
+SET /P ENDTIME1=what is the first episode END time? ex: 00:00:00 here:
+IF "%ENDTIME1%"=="" SET "ENDTIME1=00:00:00"
+ECHO Lets setup the Second Episode
+SET /P EPISODEoutput2=what is the Second episode Name? ex: Episode2 here:
+IF "%EPISODEoutput2%"=="" SET "EPISODEoutput1=Episode2"
+SET /P STARTTIME2=what is the Second episode Start time? ex: 00:00:00 If it starts Immediantly after Episode 1 Press Enter here:
+IF "%STARTTIME2%"=="" SET "STARTTIME2=%ENDTIME1%%"
+SET /P ENDTIME2=what is the first episode END time? ex: 00:00:00 here:
+IF "%ENDTIME2%"=="" SET "ENDTIME2=00:30:00"
+echo Splitting off the first Episode
+%FFMPG% -i "%EPISODELOCATION%%EPISODENAME%" -vcodec copy -acodec copy -ss %STARTTIME1% -t %ENDTIME1% "%EPISODELOCATION%%EPISODEoutput1%.mp4"
+echo Splitting off the Second Episode
+%FFMPG% -i "%EPISODELOCATION%%EPISODENAME%" -vcodec copy -acodec copy -ss %STARTTIME2% -t %ENDTIME2% "%EPISODELOCATION%%EPISODEOUTPUT2%.mp4"
 
 :Automagic
 Title Plexinator - Handbreak Conversion (Step 1.1)
