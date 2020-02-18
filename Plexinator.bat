@@ -152,10 +152,12 @@ IF %SUBMENUSELECT%==8 goto ADDTOOLS
 CLS
 Title Plexinator - Additional Tools
 echo What Else would you like to do
-echo 1. Spit an Episode 
+echo 1. Spit an Episode
+echo 2. Reduce all Videos in folder Size (.mp4)
 
 Set /P ADDTOOLOP=Type Your Choice then press ENTER:
 IF %ADDTOOLOP%==1 goto SplitEpisode
+IF %ADDTOOLOP%==2 goto VIDEOREDUCER
 
 :DeDup
 Title Plexinator - Handbreak Conversion (Step 1.1)
@@ -287,6 +289,29 @@ echo Splitting off the first Episode
 %FFMPG% -i "%EPISODELOCATION%%EPISODENAME%" -vcodec copy -acodec copy -ss %STARTTIME1% -t %ENDTIME1% "%EPISODELOCATION%%EPISODEoutput1%.mp4"
 echo Splitting off the Second Episode
 %FFMPG% -i "%EPISODELOCATION%%EPISODENAME%" -vcodec copy -acodec copy -ss %STARTTIME2% -t %ENDTIME2% "%EPISODELOCATION%%EPISODEOUTPUT2%.mp4"
+pause
+goto submenu
+
+:VIDEOREDUCER
+:SplitEpisode
+CLS
+Title Plexinator - Video Size Reducer
+Echo Lets Reduce some video sizes
+Echo Note do this in a test enviorment first
+FOR /F "tokens=*" %%I IN ('DIR /B /S *.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV -or *.mp4') do (
+    echo File: %FULLFILENAME%
+   "%HANDBRAKE_CLI%" -i "%FULLFILENAME%" -o "%TEMPFILENAME%" -E ffaac -B 96k -6 stereo -R 44.1 -e x264 -q 27 -x cabac=1:ref=5:analyse=0x133:me=umh:subme=9:chroma-me=1:deadzone-inter=21:deadzone-intra=11:b-adapt=2:rc-lookahead=60:vbv-maxrate=10000:vbv-bufsize=10000:qpmax=69:bframes=5:b-adapt=2:direct=auto:crf-max=51:weightp=2:merange=24:chroma-qp-offset=-1:sync-lookahead=2:psy-rd=1.00,0.15:trellis=2:min-keyint=23:partitions=all --optimize
+        if not errorlevel 1 (
+            move /Y "%TEMPFILENAME%" "%%~dpnI.mp4""
+            if not errorlevel 1 set /A FilesEncoded+=1
+        )
+        if exist "%TEMPFILENAME%" del "%TEMPFILENAME%"
+        if exist "%%~dpnI.mp4" del "%FULLFILENAME%"
+    )
+)
+pause
+goto submenu
+
 
 :Automagic
 Title Plexinator - Handbreak Conversion (Step 1.1)
