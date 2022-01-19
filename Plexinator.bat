@@ -100,7 +100,7 @@ IF %HBO1%==2 SET "HBOPTIONS=--preset="HQ 720p30 Surround" --optimize"
 IF %HBO1%==3 SET "HBOPTIONS=--preset="Fast 720p30" --optimize"
 IF %HBO1%==4 SET "HBOPTIONS=--preset="Very Fast 1080p30" --optimize"
 IF %HBO1%==5 SET "HBOPTIONS=-E ffaac -B 96k -6 stereo -R 44.1 -e x264 -q 27 -x cabac=1:ref=5:analyse=0x133:me=umh:subme=9:chroma-me=1:deadzone-inter=21:deadzone-intra=11:b-adapt=2:rc-lookahead=60:vbv-maxrate=10000:vbv-bufsize=10000:qpmax=69:bframes=5:b-adapt=2:direct=auto:crf-max=51:weightp=2:merange=24:chroma-qp-offset=-1:sync-lookahead=2:psy-rd=1.00,0.15:trellis=2:min-keyint=23:partitions=all --optimize"
-SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV"
+SET "HBFILETYPES=*.ts -or *.avi -or *.mov -or *.m4v -or *.flv -or *.MPV -or *.MPEG -or *.WMV -or *.mkv -or *.m2ts"
 REM FFMPEG and FFPROBE OPTIONS
 SET "ProbeOptions=-loglevel error -show_entries stream=codec_name -of default=nw=1"
 SET "MpegOptions=-hide_banner -fflags +genpts+discardcorrupt+fastseek -analyzeduration 100M -probesize 50M -hwaccel dxva2 -y -threads %THREADS% -v error -stats"
@@ -137,6 +137,7 @@ echo 5. Tester
 echo 6. Automagic
 echo 7. New Video Folder
 echo 8. Additional Tools
+echo 9. MKV 2 MP4
 
 set /p SUBMENUSELECT=Type Your Choice then press ENTER :
 IF %SUBMENUSELECT%==1 goto DeDup
@@ -147,6 +148,7 @@ IF %SUBMENUSELECT%==5 goto Tester
 IF %SUBMENUSELECT%==6 goto Automagic
 IF %SUBMENUSELECT%==7 goto VFDIR
 IF %SUBMENUSELECT%==8 goto ADDTOOLS
+IF %SUBMENUSELECT%==9 goto MKV2MP4
 
 :ADDTOOLS
 CLS
@@ -181,6 +183,11 @@ FOR /F "tokens=*" %%I IN ('DIR /B /S %HBFILETYPES%') do (
         if exist "%%~dpnI.mp4" del "%FULLFILENAME%"
     )
 )
+pause
+goto submenu
+
+:MKV2MP4
+CLS
 Title Plexinator - FFMPEG REMUX (Step 2.1)
 FOR /F "tokens=*" %%I IN ('DIR /B /S *.mkv') do (
     echo File: %FULLFILENAME%
